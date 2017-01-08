@@ -817,6 +817,11 @@ en:
       outdoor_seating:
         # outdoor_seating=*
         label: Outdoor Seating
+        options:
+          # outdoor_seating=yes
+          yes: Yes
+          # outdoor_seating=no
+          no: No
       par:
         # par=*
         label: Par
