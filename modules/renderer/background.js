@@ -94,6 +94,11 @@ export function rendererBackground(context) {
             imageryUsed.push('Local GPX');
         }
 
+        var importLayer = context.layers().layer('import');
+        if (importLayer /*&& gpx.enabled() && gpx.hasGpx()*/) {
+            imageryUsed.push('Import layer');
+        }
+
         var mapillary_images = context.layers().layer('mapillary-images');
         if (mapillary_images && mapillary_images.enabled()) {
             imageryUsed.push('Mapillary Images');

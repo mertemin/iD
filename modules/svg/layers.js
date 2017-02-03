@@ -4,6 +4,7 @@ import { utilRebind } from '../util/rebind';
 import { utilGetDimensions, utilSetDimensions } from '../util/dimensions';
 import { svgDebug } from './debug';
 import { svgGpx } from './gpx';
+import { svgImport } from './import';
 import { svgMapillaryImages } from './mapillary_images';
 import { svgMapillarySigns } from './mapillary_signs';
 import { svgOsm } from './osm';
@@ -17,6 +18,7 @@ export function svgLayers(projection, context) {
             { id: 'gpx', layer: svgGpx(projection, context, dispatch) },
             { id: 'mapillary-images', layer: svgMapillaryImages(projection, context, dispatch) },
             { id: 'mapillary-signs',  layer: svgMapillarySigns(projection, context, dispatch) },
+            { id: 'import', layer: svgImport(projection, context, dispatch) },
             { id: 'debug', layer: svgDebug(projection, context, dispatch) }
         ];
 

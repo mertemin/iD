@@ -81,6 +81,11 @@ export function uiMapData(context) {
         }
 
 
+        function clickImport() {
+            toggleLayer('import');
+        }
+
+
         function clickMapillaryImages() {
             toggleLayer('mapillary-images');
             if (!showsLayer('mapillary-images')) {
@@ -323,9 +328,71 @@ export function uiMapData(context) {
         }
 
 
+        function drawImport(selection) {
+            var importItem = layers.layer('import'),
+                hasImport = false, //importItem && importItem.hasImport(),
+                showsImport = false; //hasImport && importItem.enabled();
+
+            var importLayerItem = selection
+                .selectAll('.layer-list-import')
+                .data(importItem ? [0] : []);
+
+            // Exit
+            importLayerItem.exit()
+                .remove();
+
+            // Enter
+            var enter = importLayerItem.enter()
+                .append('ul')
+                .attr('class', 'layer-list layer-list-import')
+                .append('li')
+                .classed('list-item-import', true);
+
+            enter
+                .append('button')
+                .attr('class', 'list-item-import-browse')
+                .call(tooltip()
+                    .title(t('gpx.browse'))
+                    .placement((textDirection === 'rtl') ? 'right' : 'left'))
+                .on('click', function() {
+                    d3.select(document.createElement('input'))
+                        .attr('type', 'file')
+                        .on('change', function() {
+                            importItem.files(d3.event.target.files);
+                        })
+                        .node().click();
+                })
+                .call(svgIcon('#icon-geolocate'));
+
+            var labelImport = enter
+                .append('label')
+                .call(tooltip().title(t('gpx.drag_drop')).placement('top'));
+
+            labelImport
+                .append('span')
+                .text(t('gpx.local_layer'));
+
+
+            // Update
+            importLayerItem = importLayerItem
+                .merge(enter);
+
+            importLayerItem
+                .classed('active', showsImport)
+                .selectAll('input')
+                .property('disabled', !hasImport)
+                .property('checked', showsImport);
+
+            importLayerItem
+                .selectAll('label')
+                .classed('deemphasize', !hasImport);
+        }
+
+
         function update() {
             dataLayerContainer.call(drawMapillaryItems);
             dataLayerContainer.call(drawGpxItem);
+            importContainer.call(drawImport);
 
             fillList.call(drawList, fills, 'radio', 'area_fill', setFill, showsFill);
             featureList.call(drawList, features, 'checkbox', 'feature', clickFeature, showsFeature);
@@ -470,6 +537,25 @@ export function uiMapData(context) {
         var featureList = featureContainer
             .append('ul')
             .attr('class', 'layer-list layer-feature-list');
+
+        // import
+        content
+            .append('a')
+            .text('Import')
+            .attr('href', '#')
+            .classed('hide-toggle', true)
+            .classed('expanded', false)
+            .on('click', function() {
+                var exp = d3.select(this).classed('expanded');
+                importContainer.style('display', exp ? 'none' : 'block');
+                d3.select(this).classed('expanded', !exp);
+                d3.event.preventDefault();
+            });
+
+        var importContainer = content
+            .append('div')
+            .attr('class', 'data-import-layers')
+            .style('display', 'none');
 
 
         context.features()
